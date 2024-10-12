@@ -1,0 +1,17 @@
+package sspscom.example.ssps.Service;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+
+@Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class StudentService {
+
+    public ResponseEntity<String> getStudentInfor() {
+        return ResponseEntity.ok("Student Information");
+    }
+}
