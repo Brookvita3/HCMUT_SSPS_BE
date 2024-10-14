@@ -13,15 +13,11 @@ import sspscom.example.ssps.Service.EmailService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/email")
+@RequestMapping("/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-
-public class EmailController {
-    EmailService emailService;
-
-    @GetMapping("/sendEmail")
-    public ResponseEntity<String> sendEmail() {
-        emailService.sendMail("bach.tranchinhbach@hcmut.edu.vn", "Test", "hello");
-        return ResponseEntity.status(HttpStatus.OK).body("Email sent");
+public class AuthController {
+    @GetMapping("/login")
+    public String login() {
+        return "login successful";
     }
 }
