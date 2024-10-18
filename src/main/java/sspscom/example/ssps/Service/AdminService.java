@@ -3,7 +3,6 @@ package sspscom.example.ssps.Service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sspscom.example.ssps.Dto.Request.UserCreationRequest;
@@ -23,23 +22,23 @@ public class AdminService {
     AdminMapper adminMapper;
     PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<String> addStudent(UserCreationRequest userCreationRequest) {
+    public User addStudent(UserCreationRequest userCreationRequest) {
         User student = studentMapper.toUser(userCreationRequest);
         student.setPassword(passwordEncoder.encode(student.getPassword()));
         userRepository.save(student);
         var subject = "Create account successfully";
         var body = "Your account has been created successfully";
         emailService.sendMail(userCreationRequest.getEmail(), subject, body);
-        return ResponseEntity.ok("Student added successfully");
+        return student;
     }
 
-    public ResponseEntity<String> addAdmin(UserCreationRequest userCreationRequest) {
+    public User addAdmin(UserCreationRequest userCreationRequest) {
         User admin = adminMapper.toUser(userCreationRequest);
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         userRepository.save(admin);
         var subject = "Create account successfully";
         var body = "Your account has been created successfully";
         emailService.sendMail(userCreationRequest.getEmail(), subject, body);
-        return ResponseEntity.ok("Admin added successfully");
+        return admin;
     }
 }

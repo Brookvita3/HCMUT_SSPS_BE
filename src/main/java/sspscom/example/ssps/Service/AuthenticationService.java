@@ -7,11 +7,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sspscom.example.ssps.Dto.Response.LoginFormResponse;
 import sspscom.example.ssps.Entity.User;
+import sspscom.example.ssps.Exception.AppException;
+import sspscom.example.ssps.Exception.ErrorCode;
 import sspscom.example.ssps.Repository.UserRepository;
 
 import java.util.Date;
@@ -24,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     @NonFinal
     @Value("${SECRET_KEY}")
     String SECRET_KEY;
@@ -35,13 +40,15 @@ public class AuthenticationService {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .issuer("SSPS_HCMUT")
                 .subject(user.getUsername())
+                .issuer("SSPS_HCMUT")
                 .issueTime(new Date())
-                .expirationTime(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1)))
+                .expirationTime(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1)))
+                .claim("role", buildScope(user.getRole()))
                 .claim("scope", buildScope(user.getRole()))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
+
         Payload payload = new Payload(jwtClaimsSet.toString());
 
         JWSObject jwsObject = new JWSObject(jwsHeader, payload);
@@ -53,8 +60,10 @@ public class AuthenticationService {
         return role;
     }
 
-    public boolean checkLogin(String username, String password) {
-        var user = userRepository.findByUsername(username);
-        return user.filter(value -> passwordEncoder.matches(password, value.getPassword())).isPresent();
+    public LoginFormResponse checkLogin(String username, String password) throws JOSEException {
+        var user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return LoginFormResponse.builder()
+                .token(generateToken(user))
+                .build();
     }
 }
