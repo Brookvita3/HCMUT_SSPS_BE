@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentCreationRequest {
+public class UserCreationRequest {
 
     @NotNull(message = "username can not be null")
     @Size(min = 5, message = "userName must be at least 5 characters")

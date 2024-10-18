@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentCreationResponse {
+public class UserCreationResponse {
     String username;
     String password;
 }

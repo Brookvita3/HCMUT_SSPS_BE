@@ -7,8 +7,8 @@ import sspscom.example.ssps.Dto.Request.UserCreationRequest;
 import sspscom.example.ssps.Entity.User;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface StudentMapper {
-    @Mapping(target = "role", constant = "STUDENT")
+public interface AdminMapper {
+    @Mapping(target = "role", constant = "ADMIN")
     User toUser(UserCreationRequest request);
 }
 

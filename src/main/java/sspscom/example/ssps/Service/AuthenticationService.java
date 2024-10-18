@@ -8,12 +8,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sspscom.example.ssps.Entity.User;
+import sspscom.example.ssps.Repository.UserRepository;
 
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +28,15 @@ public class AuthenticationService {
     @Value("${SECRET_KEY}")
     String SECRET_KEY;
 
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+
     String generateToken(User user) throws JOSEException {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .issuer("SSPS_HCMUT")
-                .subject(user.getUserName())
+                .subject(user.getUsername())
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1)))
                 .claim("scope", buildScope(user.getRole()))
@@ -43,6 +50,11 @@ public class AuthenticationService {
     }
 
     String buildScope(String role) {
-        return "Role";
+        return role;
+    }
+
+    public boolean checkLogin(String username, String password) {
+        var user = userRepository.findByUsername(username);
+        return user.filter(value -> passwordEncoder.matches(password, value.getPassword())).isPresent();
     }
 }
