@@ -1,6 +1,7 @@
 package sspscom.example.ssps.Controller;
 
 
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ public class AdminController {
     AdminService adminService;
 
     @PostMapping("/add/student")
-    public APIResponse<User>addStudent(@RequestBody UserCreationRequest request) {
+    public APIResponse<User>addStudent(@Valid @RequestBody UserCreationRequest request) {
         return APIResponse.<User>builder()
                 .data(adminService.addStudent(request))
                 .message("Student add successfully")
@@ -34,7 +35,7 @@ public class AdminController {
     }
 
     @PostMapping("/add/admin")
-    public APIResponse<User>addAdmin(@RequestBody UserCreationRequest request) {
+    public APIResponse<User>addAdmin(@Valid @RequestBody UserCreationRequest request) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info(authentication.getAuthorities().toString());
         System.out.println("Authorities: " + authentication.getAuthorities());

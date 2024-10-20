@@ -1,12 +1,14 @@
 package sspscom.example.ssps.Entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,13 +17,18 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "user")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    @Column(unique = true, nullable = false)
     String username;
     String email;
     String password;
-    String role;
+
+    @Enumerated(EnumType.STRING)
+    Role role;
 }

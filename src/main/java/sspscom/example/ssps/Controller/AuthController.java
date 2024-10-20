@@ -29,7 +29,7 @@ public class AuthController {
                 .build();
     }
 
-    @GetMapping("/login")
+    @GetMapping("/login/page")
     public ResponseEntity<String> loginPage() {
         return ResponseEntity.ok().body("This is login page");
     }

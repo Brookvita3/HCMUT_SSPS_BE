@@ -13,6 +13,6 @@ import java.io.IOException;
 public interface JWTAuthenticationEntryPoint extends AuthenticationEntryPoint {
     @Override
     default void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-
+        response.sendRedirect("/auth/login");
     }
 }

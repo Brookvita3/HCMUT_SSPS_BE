@@ -23,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_GET_URL = {"/students", "/auth/login"};
+    private final String[] PUBLIC_GET_URL = {"/students", "/auth/login", "/auth/login/page"};
     private final String[] PUBLIC_POST_URL = {"/auth/login"};
 
     @Value("${SECRET_KEY}")
@@ -38,13 +38,13 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_URL).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_URL).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/admin/add/admin").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/admin/add/student").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/add/admin").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/add/student").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(authenticationService -> authenticationService
                         .authenticationEntryPoint((request, response, authException) ->
-                                response.sendRedirect("/auth/login")))
+                                response.sendRedirect("/auth/login/page")))
                 .csrf(AbstractHttpConfigurer::disable);
 
         http.oauth2ResourceServer(oauth2 ->
@@ -73,10 +73,9 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // This ensures "ADMIN" is mapped to "ROLE_ADMIN"
+        grantedAuthoritiesConverter.setAuthorityPrefix(""); // This ensures "ADMIN" is mapped to "ROLE_ADMIN"
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
         authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-
         return authenticationConverter;
     }
 

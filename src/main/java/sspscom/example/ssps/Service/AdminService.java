@@ -22,6 +22,7 @@ public class AdminService {
     AdminMapper adminMapper;
     PasswordEncoder passwordEncoder;
 
+
     public User addStudent(UserCreationRequest userCreationRequest) {
         User student = studentMapper.toUser(userCreationRequest);
         student.setPassword(passwordEncoder.encode(student.getPassword()));

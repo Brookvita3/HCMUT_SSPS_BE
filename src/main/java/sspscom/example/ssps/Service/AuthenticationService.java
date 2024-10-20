@@ -44,8 +44,8 @@ public class AuthenticationService {
                 .issuer("SSPS_HCMUT")
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1)))
-                .claim("role", buildScope(user.getRole()))
-                .claim("scope", buildScope(user.getRole()))
+//                .claim("role", buildScope(user.getRole()))
+                .claim("scope", buildScope(user.getRole().name()))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
 
@@ -62,8 +62,12 @@ public class AuthenticationService {
 
     public LoginFormResponse checkLogin(String username, String password) throws JOSEException {
         var user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        return LoginFormResponse.builder()
-                .token(generateToken(user))
-                .build();
+        var pass = passwordEncoder.matches(password, user.getPassword());
+        if (pass) {
+            return LoginFormResponse.builder()
+                    .token(generateToken(user))
+                    .build();
+        }
+        else throw new AppException(ErrorCode.PASSWORD_INCORRECT);
     }
 }
