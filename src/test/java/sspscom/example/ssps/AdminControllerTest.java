@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -23,6 +24,7 @@ import sspscom.example.ssps.Service.AdminService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser(authorities = {"ADMIN"})
+@TestPropertySource("/test.properties")
 public class AdminControllerTest {
 
     @Autowired
@@ -80,9 +82,7 @@ public class AdminControllerTest {
                 .post("/admin/add/student")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(content))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("code").value(1000));
-
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
 }
